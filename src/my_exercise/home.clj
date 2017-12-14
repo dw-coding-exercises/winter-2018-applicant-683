@@ -131,8 +131,28 @@
     [:div.button
      [:button {:type "submit"} "Search"]]]])
 
+(defn display-results [request]
+  [:div
+   ;; this is terrible. please excuse its badness. works tho
+   [:table
+    [:tr
+     [:th "Date"]
+     [:th "Description"]]
+    (for [election (request :elections)]
+      [:tr
+       [:th (election :date)]
+       [:th (election :description)]])]])
+
+(defn no-results-found [request]
+  [:div
+   [:p "No elections found for this address."]])
+
 (defn page [request]
   (html5
    (header request)
    (instructions request)
-   (address-form request)))
+   (address-form request)
+   (if (request :show-results?)
+     (if (not (empty? (request :elections)))
+       (display-results request)
+       (no-results-found request)))))
